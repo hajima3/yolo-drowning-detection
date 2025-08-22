@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+venv.bak/
+pip-wheel-metadata/
+build/
+dist/
+
+# VS Code
+.vscode/
+
+# Data / models
+data/
+models/
+weights/
+*.pt
+*.onnx
+*.h5
+
+# Logs
+*.log
+
+# Node
+node_modules/
+npm-debug.log
+
+# macOS
+.DS_Store
