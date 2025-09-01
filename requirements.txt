@@ -5,3 +5,5 @@ opencv-python
 pillow
 pyyaml
 pytest
+flask
+requests
