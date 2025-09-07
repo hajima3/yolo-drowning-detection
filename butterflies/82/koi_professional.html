@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Koi Fish - Advanced 3D System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #001144 0%, #002266 100%);
+            overflow: hidden;
+            color: white;
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 20, 50, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            z-index: 100;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-panel h2 {
+            color: #88ddff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-panel h3 {
+            color: #aaccff;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "▸";
+            color: #88ddff;
+            position: absolute;
+            left: 0;
+        }
+
+        .species-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .species-item {
+            background: rgba(50, 100, 150, 0.3);
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .controls-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 20, 50, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 200;
+        }
+
+        .loading h2 {
+            color: #88ddff;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(136, 221, 255, 0.3);
+            border-top: 3px solid #88ddff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="loading" id="loading">
+            <h2>Initializing Professional Koi System</h2>
+            <div class="spinner"></div>
+            <p>Loading advanced 3D models and PBR materials...</p>
+        </div>
+
+        <div class="info-panel">
+            <h2>🐟 Professional Koi Fish System</h2>
+            
+            <h3>Advanced Features Implemented:</h3>
+            <ul class="feature-list">
+                <li>Hierarchical skeletal animation system</li>
+                <li>PBR (Physically Based Rendering) materials</li>
+                <li>5,000-8,000 triangle high-detail meshes</li>
+                <li>Individual fin bone animations</li>
+                <li>Realistic swimming behavior algorithms</li>
+                <li>Clearcoat and iridescence effects</li>
+            </ul>
+
+            <h3>Koi Varieties:</h3>
+            <div class="species-grid">
+                <div class="species-item">
+                    <strong>Kohaku</strong><br>
+                    White base with red patterns
+                </div>
+                <div class="species-item">
+                    <strong>Sanke</strong><br>
+                    White, red, and black
+                </div>
+                <div class="species-item">
+                    <strong>Showa</strong><br>
+                    Black base with red/white
+                </div>
+                <div class="species-item">
+                    <strong>Mythical</strong><br>
+                    Golden with iridescence
+                </div>
+            </div>
+
+            <h3>Animation Parameters:</h3>
+            <ul class="feature-list">
+                <li>Body wave amplitude & frequency</li>
+                <li>Individual pectoral fin movement</li>
+                <li>Dorsal fin raise/lower control</li>
+                <li>Complex tail fin animation</li>
+                <li>Procedural swimming patterns</li>
+            </ul>
+        </div>
+
+        <div class="controls-info">
+            <h3>🎮 Controls</h3>
+            <p><strong>Mouse:</strong> Click and drag to rotate camera</p>
+            <p><strong>Automatic:</strong> Fish swim with realistic behavior</p>
+            <p><strong>Rendering:</strong> Real-time PBR with advanced lighting</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ProfessionalKoiSystem } from './koi_professional.js';
+        
+        // Hide loading screen after initialization
+        setTimeout(() => {
+            document.getElementById('loading').classList.add('hide');
+        }, 2000);
+        
+        // Initialize the professional koi system
+        window.koiSystem = new ProfessionalKoiSystem();
+        
+        // Add some interactivity
+        document.addEventListener('keydown', (event) => {
+            switch(event.code) {
+                case 'Space':
+                    // Toggle fish speed
+                    window.koiSystem.koiFish.forEach(fish => {
+                        fish.swimSpeed = fish.swimSpeed === 1.0 ? 2.0 : 1.0;
+                    });
+                    break;
+                case 'KeyR':
+                    // Reset camera position
+                    window.koiSystem.camera.position.set(0, 5, 25);
+                    window.koiSystem.camera.lookAt(0, 0, 0);
+                    break;
+            }
+        });
+        
+        console.log('Professional Koi System Initialized');
+        console.log('Features: Skeletal animation, PBR materials, 5k-8k triangles per fish');
+        console.log('Controls: Mouse to rotate, Space to toggle speed, R to reset camera');
+    </script>
+</body>
+</html>
