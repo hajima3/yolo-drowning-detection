@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏊‍♂️ Drowning Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .video-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .video-stream {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .info-panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .status-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .status-card.alert {
+            border-left-color: #ff4444;
+            background: rgba(255,68,68,0.2);
+        }
+        
+        .status-card.warning {
+            border-left-color: #ffaa00;
+            background: rgba(255,170,0,0.2);
+        }
+        
+        .status-card h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .status-card p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .alert-banner {
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏊‍♂️ AI-Powered Drowning Detection System</h1>
+            <p>Real-time monitoring for campus swimming pool safety</p>
+        </div>
+        
+        <div id="alertBanner" class="alert-banner">
+            🚨 DROWNING ALERT DETECTED! Check pool area immediately!
+        </div>
+        
+        <div class="dashboard">
+            <div class="video-container">
+                <h2 style="margin-bottom: 15px;">📹 Live Camera Feed</h2>
+                <img src="{{ url_for('video_feed') }}" class="video-stream" alt="Live Video Stream">
+            </div>
+            
+            <div class="info-panel">
+                <h2 style="margin-bottom: 20px;">📊 System Status</h2>
+                
+                <div id="systemStatus" class="status-card">
+                    <h3>🟢 System Online</h3>
+                    <p>Monitoring active, all systems operational</p>
+                </div>
+                
+                <div id="detectionStatus" class="status-card">
+                    <h3>👤 Detection Status</h3>
+                    <p id="detectionCount">Scanning for people...</p>
+                </div>
+                
+                <div id="alertStatus" class="status-card">
+                    <h3>⚠️ Alert Status</h3>
+                    <p id="alertLevel">No alerts</p>
+                </div>
+                
+                <div class="metrics">
+                    <div class="metric">
+                        <div id="peopleCount" class="metric-value">0</div>
+                        <div class="metric-label">People Detected</div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div id="alertCount" class="metric-value">0</div>
+                        <div class="metric-label">Alerts Today</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="testAlert()">🧪 Test Alert System</button>
+            <button class="btn" onclick="refreshStatus()">🔄 Refresh Status</button>
+            <button class="btn" onclick="downloadReport()">📄 Download Report</button>
+        </div>
+        
+        <div class="footer">
+            <p>🔒 Secure monitoring system • Last updated: <span id="lastUpdate">--</span></p>
+        </div>
+    </div>
+
+    <script>
+        let alertCount = 0;
+        
+        // Update status every 2 seconds
+        setInterval(updateStatus, 2000);
+        
+        // Initial status update
+        updateStatus();
+        
+        function updateStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                    
+                    // Update detection count
+                    const detectionCount = data.detections || 0;
+                    document.getElementById('peopleCount').textContent = detectionCount;
+                    document.getElementById('detectionCount').textContent = 
+                        detectionCount > 0 ? `${detectionCount} people detected` : 'No people detected';
+                    
+                    // Check for alerts
+                    if (data.latest_alert) {
+                        const alertLevel = data.latest_alert.alert_level;
+                        const confidence = (data.latest_alert.confidence * 100).toFixed(1);
+                        
+                        // Update alert status
+                        const alertStatus = document.getElementById('alertStatus');
+                        alertStatus.className = `status-card ${alertLevel === 'high' ? 'alert' : 'warning'}`;
+                        document.getElementById('alertLevel').textContent = 
+                            `${alertLevel.toUpperCase()} alert (${confidence}% confidence)`;
+                        
+                        // Show alert banner for high alerts
+                        if (alertLevel === 'high') {
+                            document.getElementById('alertBanner').style.display = 'block';
+                            alertCount++;
+                            document.getElementById('alertCount').textContent = alertCount;
+                        }
+                    } else {
+                        document.getElementById('alertLevel').textContent = 'No alerts';
+                        document.getElementById('alertBanner').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating status:', error);
+                    document.getElementById('lastUpdate').textContent = 'Connection error';
+                });
+        }
+        
+        function testAlert() {
+            alert('🧪 Test Alert: This would trigger all configured alert methods (SMS, email, webhook, local alarm)');
+        }
+        
+        function refreshStatus() {
+            updateStatus();
+            // Reload video stream
+            const videoStream = document.querySelector('.video-stream');
+            videoStream.src = videoStream.src;
+        }
+        
+        function downloadReport() {
+            alert('📄 Feature coming soon: Download daily/weekly safety reports');
+        }
+        
+        // Handle connection errors
+        window.addEventListener('error', function(e) {
+            console.error('Page error:', e);
+        });
+    </script>
+</body>
+</html>
